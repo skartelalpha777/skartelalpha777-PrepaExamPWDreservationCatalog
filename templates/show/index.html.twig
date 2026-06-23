@@ -1,0 +1,133 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Nos Spectacles
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5">
+		<h1 class="mb-5 text-center">Découvrez nos spectacles</h1>
+
+		<form action="{{path('app_show_search')}}" class="row mb-4" method="post">
+			<div class="col-md-3">
+				<select class="form-select" name="date">
+					<option value="">Filtrer par répresentation...</option>
+					<option value="1">Aujourd'huis</option>
+					<option value="2">Cette semaine</option>
+					<option value="3">Ce mois-ci</option>
+					<option value="4">Cette année</option>
+
+				</select>
+				<select class="form-select mt-2 " name="locality">
+					<option value="">Filtrer par localité...</option>
+					<option value="Bruxelles">Bruxelles</option>
+					<option value="Laeken">Laeken</option>
+					<option value="Schaerbeek">Schaerbeek</option>
+					<option value="Ixelles">Ixelles</option>
+					<option value="Anderlecht">Anderlecht</option>
+					<option value="Uccle">Uccle</option>
+					<option value="Watermael-Boitsfort">Watermael-Boitsfort</option>
+				</select>
+			</div>
+
+			<div class="col-md-9">
+				<div class="input-group">
+					<input type="search" name="search" class="form-control" placeholder="Rechercher un spectacle">
+					<input type="hidden" name="token" value="{{ csrf_token('recherche') }}">
+					<button type="submit" class="btn btn-primary ms-4">
+						Rechercher
+					</button>
+				</div>
+				<select class="form-select mt-2 " name="Trie">
+					<option value="">Trier par...</option>
+					<option value="dureINC">Durée croissante</option>
+					<option value="dureDESC">Durée décroissante</option>
+					<option value="Date">Date d'ajout</option>
+
+
+				</select>
+			</div>
+		</form>
+
+		<div class="row">
+			{% for show in shows %}
+				<div class="col-md-4 mb-4">
+
+					<div class="card h-100 shadow-sm">
+
+						{% if show.posterURL %}
+							<a href="{{path('app_show_show',{'id':show.id})}}">
+								<img src="{{ show.posterURL }}" class="card-img-top" style="object-fit: cover; height: 250px;">
+							</a>
+						{% else %}
+							<div class="card-img-top bg-light text-secondary d-flex align-items-center justify-content-center" style="height: 250px;">
+								<span>Aucune affiche</span>
+								<a href="{{path('app_show_show',{'id':show.id})}}">Consulter le spectacle</a>
+							</div>
+						{% endif %}
+
+						<div class="card-body">
+							<h5 class="card-title text-primary">{{ show.title }}</h5>
+							{% if show.description %}
+								<p>{{show.description}}</p>
+							{% endif %}
+
+
+							<p class="card-text mt-3">
+								<i class="bi bi-clock"></i>
+								<strong>Durée :</strong>
+								{{ show.duration }}
+								minutes<br>
+
+								<i class="bi bi-geo-alt"></i>
+								<strong>Lieu :</strong>
+								{% if show.location %}
+									{{ show.location.designation }}
+								{% else %}
+									<span class="text-muted">À définir</span>
+								{% endif %}
+								<br>
+
+								<i class="bi bi-calendar"></i>
+								<strong>Ajouté le :</strong>
+								{{ show.createdIn ? show.createdIn|date('d/m/Y') : '' }}
+							</p>
+						</div>
+
+						<div class="card-footer bg-white d-flex justify-content-between align-items-center  pb-3">
+
+							{% if show.bookable%}
+								<span class="badge bg-success">Réservable</span>
+								<div>
+									{% if app.user %}
+										<a href="{{ path('app_reservation_new', {'id': show.id}) }}" class="btn btn-primary btn-sm mx-1">Réserver</a>
+
+									{% else %}
+										<p class="mb-0 text-muted small">Connectez-vous pour réserver</p>
+									{% endif %}
+								</div>
+							{% else %}
+								<span class="badge bg-danger">Non réservable</span>
+								<a href="{{ path('app_show_show', {'id': show.id}) }}" class="btn btn-outline-secondary btn-sm">En savoir plus</a>
+							{% endif %}
+
+							{% if is_granted('ROLE_ADMIN' ) %}
+								<a href="{{ path('app_show_edit', {'id': show.id}) }}" class="btn btn-danger btn-sm mx-1">Modifier ou supprimer l'évenement</a>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			{% else %}
+				<div class="col-12 text-center">
+					<div class="alert alert-info">
+						Aucun spectacle n'est disponible pour le moment. Revenez plus tard !
+					</div>
+				</div>
+			{% endfor %}
+			<div class="navigation mt-4">
+				{{ knp_pagination_render(shows) }}
+			</div>
+
+
+		</div>
+	</div>
+{% endblock %}

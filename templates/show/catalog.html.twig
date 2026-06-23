@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catalogues
+{% endblock %}
+
+{% block body %}
+	<h1>Catalogues du spectacle</h1>
+
+	<ol>
+
+		{% for cat in catalogs %}
+
+			<li>
+				{{cat.title}}
+			</li>
+
+		{% endfor %}
+	</ol>
+{% endblock %}

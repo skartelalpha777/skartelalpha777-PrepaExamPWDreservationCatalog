@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<rss version="2.0">
+    <channel>
+
+        <title>Réservation Spectacles</title>
+        <link>{{ absolute_url(path('app_show_index')) }}</link>
+        <description>Derniers spectacles ajoutés</description>
+
+        {% for show in shows %}
+            <item>
+                <title>{{ show.title }}</title>
+
+                <link>
+                    {{ absolute_url(path('app_show_show', {'id': show.id})) }}
+                </link>
+
+                <description>
+                    {{ show.description }}
+                </description>
+
+                <pubDate>
+                    {{ show.createdIn|date('r') }}
+                </pubDate>
+
+                <guid>
+                    {{ absolute_url(path('app_show_show', {'id': show.id})) }}
+                </guid>
+            </item>
+        {% endfor %}
+
+    </channel>
+</rss>

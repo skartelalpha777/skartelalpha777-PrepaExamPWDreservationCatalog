@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{ show.title }}
+	- Détails
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		<div class="row">
+
+			<div class="col-md-4 mb-4">
+
+				{% if  show.posterUrl %}
+					<img src="{{ show.posterUrl }}" alt="Affiche de {{ show.title }}" class="img-fluid rounded shadow">
+				{% elseif show.posterURL is defined and show.posterURL %}
+					<img src="{{ show.posterURL }}" alt="Affiche de {{ show.title }}" class="img-fluid rounded shadow">
+				{% else %}
+					<div class="p-5 bg-light text-center rounded shadow">
+						<span class="text-muted">Aucune image disponible</span>
+					</div>
+				{% endif %}
+			</div>
+
+			<div class="col-md-8">
+				{% for message in app.flashes('notice') %}
+					<div class="flash-notice">
+						{{ message }}
+					</div>
+				{% endfor %}
+
+				<h1 class="mb-3">{{ show.title }}</h1>
+
+				{% if show.description %}
+					<p class="lead text-muted">{{ show.description|nl2br }}</p>
+				{% endif %}
+
+				<ul class="list-group mb-4 shadow-sm">
+					<li class="list-group-item">
+						<strong>Durée :</strong>
+						{{ show.duration }}
+						minutes
+					</li>
+					<li class="list-group-item">
+						{% if show.catalogs is not empty %}
+							<a href="{{path('app_show_cat', {'id':show.id})}}">
+								Voir le Catalogue
+							</a>
+
+						</li>
+
+					{% else %}
+						<p>Aucun catalogue pour ce spectacle</p>
+
+					{% endif %}
+
+					<li class="list-group-item">
+						<i class="bi bi-geo-alt"></i>
+						<strong>Lieu :</strong>
+						{% if show.location %}
+							{{ show.location.designation }}
+						{% else %}
+							<span class="text-muted">À définir</span>
+						{% endif %}
+					</li>
+					<li class="list-group-item">
+						<strong>Statut :</strong>
+						{% if show.bookable %}
+							<span class="badge bg-success">Réservable</span>
+							{% if app.user %}
+
+								<button type="button" class="btn btn-primary" onclick="window.location.href='{{path('app_reservation_new',{'id':show.id})}}'">Reserver</button>
+
+
+							{% else %}
+								<a href="{{path('app_login')}}">Connectez vous pour réserver</a>
+							{% endif %}
+						{% else %}
+							<span class="badge bg-secondary">Non réservable</span>
+						{% endif %}
+					</li>
+				</ul>
+
+
+				<div class="d-flex gap-2 align-items-center">
+
+					<a href="{{ path('app_show_index') }}" class="btn btn-outline-secondary">Retour à la liste</a>
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

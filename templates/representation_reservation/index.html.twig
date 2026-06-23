@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}RepresentationReservation index{% endblock %}
+
+{% block body %}
+    <h1>RepresentationReservation index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Quantity</th>
+                <th>price</th>
+                <th>Respresention</th>
+                <th>Reservation</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for representation_reservation in representation_reservations %}
+            <tr>
+                <td>{{ representation_reservation.id }}</td>
+                <td>{{ representation_reservation.quantity }}</td>
+                <td>{{ representation_reservation.price.price }}</td>
+                <td>{{ representation_reservation.representation.id }}</td>
+                <td>{{ representation_reservation.reservation.id }}</td>
+                <td>
+                    <a href="{{ path('app_representation_reservation_show', {'id': representation_reservation.id}) }}">show</a>
+                    <a href="{{ path('app_representation_reservation_edit', {'id': representation_reservation.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_representation_reservation_new') }}">Create new</a>
+{% endblock %}
