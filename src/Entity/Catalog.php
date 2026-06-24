@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\CatalogRepository;
 use Doctrine\ORM\Mapping as ORM;
+
 #[ORM\Table('catalogs')]
 #[ORM\Entity(repositoryClass: CatalogRepository::class)]
 class Catalog
@@ -16,7 +17,7 @@ class Catalog
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 120, unique:true)]
+    #[ORM\Column(length: 120, unique: true)]
     private ?string $title = null;
 
     #[ORM\Column]
@@ -28,8 +29,16 @@ class Catalog
 
     /**
      * @var Collection<int, Show>
+     * ici on définit la relation ManyToMany entre Catalog et Show, en utilisant une table de jointure appelée 'catalogs_shows'.
+     * La relation est bidirectionnelle, ce qui signifie que chaque Catalog peut avoir plusieurs Shows et chaque Show peut appartenir à plusieurs Catalogs.
+     * La propriété 'inversedBy' indique que la relation est inversée par la propriété 'catalogs' dans l'entité Show.
+     * La cascade 'persist' signifie que lorsque vous persistez un Catalog, les Shows associés seront également persistés.
+     * Les colonnes de jointure sont définies avec des contraintes de suppression 'RESTRICT', ce qui signifie que vous ne pouvez pas supprimer un Catalog ou un Show si des relations existent entre eux.
      */
-    #[ORM\ManyToMany(targetEntity: Show::class, inversedBy: 'catalogs')]
+    #[ORM\ManyToMany(targetEntity: Show::class, inversedBy: 'catalogs', cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'catalog_show')]
+    #[ORM\JoinColumn(name: 'catalog_id', referencedColumnName: 'id', onDelete: 'RESTRICT')]
+    #[ORM\InverseJoinColumn(name: 'show_id', referencedColumnName: 'id', onDelete: 'RESTRICT')]
     private Collection $shows;
 
     public function __construct()
